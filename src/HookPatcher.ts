@@ -15,7 +15,7 @@ export class HookPatcher {
               this._beforeHooks.has(fn) ? undefined : (this._beforeHooks.add(fn), fn(...args));
 
       wrapper.toString = () =>
-        this._beforeHooks.has(fn) ? '() => /* patched beforeAll */' : fn.toString();
+        this._beforeHooks.has(fn) ? '() => { /* patched beforeAll */ }' : fn.toString();
 
       beforeEach(wrapper, timeout);
     };
@@ -28,7 +28,7 @@ export class HookPatcher {
               this._testFailed ? (this._afterHooks.add(fn), fn(...args)) : undefined;
 
       wrapperEach.toString = () =>
-        this._testFailed ? fn.toString() : '() => /* patched afterAll */';
+        this._testFailed ? fn.toString() : '() => { /* patched afterAll */ }';
 
       const wrapperAll =
         fn.length === 1
@@ -36,7 +36,7 @@ export class HookPatcher {
           : (...args: unknown[]) => (this._afterHooks.has(fn) ? undefined : fn(...args));
 
       wrapperAll.toString = () =>
-        this._afterHooks.has(fn) ? '() => /* patched afterAll */' : fn.toString();
+        this._afterHooks.has(fn) ? '() => { /* patched afterAll */ }' : fn.toString();
 
       afterEach(wrapperEach, timeout);
       afterAll(wrapperAll, timeout);
